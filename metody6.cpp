@@ -181,3 +181,5 @@ catch(...)
 {
 	cerr << "Nieznany blad" << endl;
 }
+
+//P.S Walcie sie ! <3
