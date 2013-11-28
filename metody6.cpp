@@ -183,3 +183,4 @@ catch(...)
 }
 
 //P.S Walcie sie ! <3
+//fakaj bąka A.G. :P
