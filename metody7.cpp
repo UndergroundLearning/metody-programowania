@@ -14,7 +14,7 @@ class osoba
 	unsigned& liczba_lat(){return wi;}
 	const string& nazwisko() const {return naz;}
 	const unsigned& liczba_lat() const {return wi;}
-	void pokaz()
+	void pokaz() const
 	{
 		cout << naz << " " << wi << endl;
 	}
