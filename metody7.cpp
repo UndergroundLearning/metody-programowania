@@ -14,7 +14,7 @@ class osoba
 	unsigned& liczba_lat(){return wi;}
 	const string& nazwisko() const {return naz;}
 	const unsigned& liczba_lat() const {return wi;}
-	void pokaz() const
+	void pokaz() const	//dodałem tu consta, bo piątkowski powiedział, że tak będzie lepiej przy "pokazywaczach"
 	{
 		cout << naz << " " << wi << endl;
 	}
@@ -40,7 +40,7 @@ class pracownik : public osoba
 
 int main()
 {
-	osoba os("Dolas", 26);
+	osoba const os("Dolas", 26); //patrz wyżej
 	os.pokaz();
 	const pracownik pr1("Dyzma", 35, "mistrz", 1250.0);
 	cout << pr1.nazwisko() << " " << pr1.liczba_lat() << " ";
