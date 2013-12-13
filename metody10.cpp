@@ -30,7 +30,7 @@ class robot
 class robot1R : public robot //robot z jednym ramieniem dziedziczy po 'robot'
 {
 	protected:
-	operacja* I; 
+	operacja* I; //chuj Ci w cycki
 	operacja* II; //wskazniki na obiekt klasy operacja
 	public:
 	robot1R(): robot(), I(0), II(0){} //jawne wolanie konstruktora domyslnego z 'robot' + zerowanie wskaznikow
