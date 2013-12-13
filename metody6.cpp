@@ -15,6 +15,8 @@ class point
 	friend class polygon;
 };
 
+//dsjigsdigds
+
 class polygon
 {
 	unsigned liczbaWezlow;
