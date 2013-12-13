@@ -4,110 +4,148 @@ using namespace std;
 
 class operacja
 {
-	string op;
-	int wart;
-	public:
-	operacja(): op("brak"), wart(0){}
-	operacja(const string& opis, const int wartosc): op(opis), wart(wartosc){}
-	//metody dostepu..
-	string& opis(){return op;}
-	int& wartosc(){return wart;}
-	const string& opis() const {return op;}
-	const int& wartosc() const {return wart;}
+        string op;
+        int wart;
+        public:
+        operacja(): op("brak"), wart(0){}
+        operacja(const string& opis, const int wartosc): op(opis), wart(wartosc){}
+        string& opis(){return op;}
+        const string& opis() const {return op;}
+        int& wartosc(){return wart;}
+        const int& wartosc() const {return wart;}
 };
 
 class robot
 {
-	protected:
-	unsigned nr;
-	public:
-	robot(): nr(0){}
-	robot(const unsigned numer): nr(numer){}
-	virtual void praca() const {} //definicja virtualnej metody, ktora dla 'robot' nie bedzie nic robila
-	virtual ~robot(){} // --||-- destruktor virtualny, dziala tak, ze jak wywoluje sie destruktor klasy pochodnej to automatycznie wywoluja sie destruktory w gore, az do bazowej
+        protected:
+        unsigned nr;
+        public:
+        robot(): nr(0){}
+        robot(const unsigned numer): nr(numer){}
+        virtual void praca() const = 0;
+        virtual ~robot(){}
 };
 
-class robot1R : public robot //robot z jednym ramieniem dziedziczy po 'robot'
+class robot1R : public robot
 {
-	protected:
-	operacja* I; //chuj Ci w cycki
-	operacja* II; //wskazniki na obiekt klasy operacja
-	public:
-	robot1R(): robot(), I(0), II(0){} //jawne wolanie konstruktora domyslnego z 'robot' + zerowanie wskaznikow
-	robot1R(const unsigned numer, const operacja* pierwsza, const operacja* druga): robot(numer), I(pierwsza ? new operacja(*pierwsza) : 0), II(druga ? new operacja(*druga): 0){} // tu tez jawne wolanie konstruktora z jednym argumentem z 'robot'
-	void praca() const // tu juz definicja tej motody praca, nie powtarza sie juz 'virtual'
-	{
-		if(I && II)
-		{
-			cout << I->opis() << " " << I->wartosc() << endl;
-			cout << II->opis() << " " << II->wartosc() << endl; //proste wyswietlanie, tak kazal..
-		}
-		else
-			cout << "Brak operacji" << endl;
-	}
-	~robot1R(){delete I; delete II;} //destruktor, bo sa wskazniki, tez nie powtarza sie juz virtual
-
+        protected:
+        unsigned roz1;
+        operacja* ram1;
+        public:
+        robot1R(): robot(), roz1(0), ram1(0){}
+        robot1R(const unsigned numer, const operacja* b, const operacja* e): robot(numer), roz1((e-b)?e-b:0), ram1(roz1 ? new operacja[roz1] : 0)
+        {
+                for(unsigned i=0; i<roz1; i++)
+                        ram1[i] = b[i];
+        }
+        robot1R(const robot1R& drugi): robot(drugi), roz1(drugi.roz1), ram1(roz1 ? new operacja [roz1] : 0)
+        {
+                for(unsigned i=0; i<roz1; i++)
+                        ram1[i] = drugi.ram1[i];
+        }
+        robot1R& operator = (const robot1R& drugi)
+        {
+                if(this != &drugi)
+                {
+						nr = drugi.nr;
+                        delete [] ram1;
+                        roz1 = drugi.roz1;
+						ram1 = roz1 ? new operacja [roz1] : 0;
+                        for(unsigned i=0; i<roz1; i++)
+                                ram1[i] = drugi.ram1[i];
+                }
+                return *this;
+        }
+        void praca() const
+        {
+                if(ram1)
+                {
+                        for(unsigned i=0; i<roz1; i++)
+                        {
+                                cout << ram1[i].opis() << " " << ram1[i].wartosc() << endl;
+                        }
+                }
+        }
+        ~robot1R(){delete []ram1;}
 };
 
-class robot2R : public robot1R //robot z dwoma ramionami dziedziczy po robocie z jednym, dlatego, ze tworzy sobie jako podobiekt robota z jednym i dokladasz tylko jedno ramie gratis :D
+class robot2R : public robot1R
 {
-	operacja* III; 
-	operacja* IV; //drugie ramie (full gratis)
-	public:
-	robot2R(): robot1R(), III(0), IV(0){} //tez jawnie konstruktor z robot1R, ktory wywola sobie kosntruktor z 'robot', feel me ?
-	robot2R(const unsigned numer, const operacja* pierwsza, const operacja* druga, const operacja* trzecia, const operacja* czwarta): robot1R(numer, pierwsza, druga), III(trzecia ? new operacja(*trzecia) : 0), IV(czwarta ? new operacja(*czwarta) : 0 ){} //tutaj tez jawnie wolasz kontruktor ten inicjalizujacy z robota1R i dokladasz inicjalizacje drugiego ramienia
-	void praca() const //definicja pracy dla tego z dwoma ramionami (polimorficzna, czyli, ze dla kazdej klasy pochodnej moze miec inna definicje i pozniej na podstawie typu wskaznika w mainie wywola sie odpowiednia
-	{
-		if(III && IV)
-		{
-			robot1R::praca(); //dla tego z jednym ramieniem ona jest jez zdefiniowana wiec mozna ja zawolac :P i ona wyswietli co robie to pierwsze ramie
-			cout << III->opis() << " " << III->wartosc() << endl; // a tu dokladasz wyswietlanie do robi drugie
-			cout << IV->opis() << " " << IV->wartosc() << endl;
-		}
-		else
-			cout << "Brak operacji" << endl;
-	}
-	~robot2R(){delete III; delete IV;} // --||-- destruktor z wiadomych wzgledow :P
+        unsigned roz2;
+        operacja* ram2;
+        public:
+        robot2R(): robot1R(), roz2(0), ram2(0){}
+        robot2R(const unsigned numer, const operacja* b1, const operacja* e1, const operacja* b2, const operacja* e2): robot1R(numer, b1, e1), roz2((e2-b2)>0 ? e2-b2 : 0), ram2(roz2 ? new operacja[roz2] : 0)
+        {
+                for(unsigned i=0; i<roz2; i++)
+                        ram2[i] = b2[i];
+        }
+        robot2R(const robot2R& drugi): robot1R(drugi), roz2(drugi.roz2), ram2(roz2 ? new operacja[roz2] : 0)
+        {
+                for(unsigned i=0; i<roz2; i++)
+                        ram2[i] = drugi.ram2[i];
+        }
+        robot2R& operator= (const robot2R& drugi)
+        {
+                if(this!=&drugi)
+                {
+                        robot1R::operator=(drugi);
+                        roz2 = drugi.roz2;
+                        delete [] ram2;
+                        ram2 = roz2 ? new operacja[roz2] : 0;
+                        for(unsigned i=0; i<roz2; i++)
+                                ram2[i] = drugi.ram2[i];
+                }
+                return *this;
+        }
+        void praca() const
+        {
+                robot1R::praca();
+                if(ram2)
+                {
+                        for(unsigned i=0; i<roz2; i++)
+                                cout << ram2[i].opis() << " " << ram2[i].wartosc() << endl;
+                }
+        }
+        ~robot2R(){delete[] ram2;}
 };
 
-class podajnik : public robot //podajnik ma tylko numer, wiec dziedziczy sobie go bezposrednio od 'robot'
+class podajnik : public robot
 {
-	public:
-	podajnik(): robot(){} //jawnie bo tak :D
-	podajnik(const unsigned numer): robot(numer){} //same old shit
-	void praca() const
-	{
-		cout << "Podawanie" << endl; //nie wiedzialem co napisac :P
-	}
+        public:
+        podajnik(): robot(){}
+        podajnik(const unsigned numer): robot(numer){}
+        void praca() const
+        {
+                cout << "Podajnik" << endl;
+        }
 };
 
-void wykonaj(robot** b, robot** e) //tutaj podwojne wskazniki bo ta 'linia' z maina to tablica wskaznikow do wskaznikow
+void wykonaj(robot** b, robot** e)
 {
-	unsigned roz = e-b; //jak odejmiesz wskaznik konca tablicy od wskaznika poczatku wyjdzie Ci rozmiar
-	for(unsigned i=0; i<roz; i++)
-	{
-		b[i]->praca(); //i w petelce wywolujesz sobie po kolei prace z wszystkich robotow, i tu wlasnie dziala ten polimorfizm, bo ta tablica 'linia' to jest tablica obiektow typu 'robot' a sa w niej rozne roboty(z 1 ramieniem czy tam z dwoma i podajniki), na podstawie typu wywola odpowiednia definicje funkcji praca
-	}
+        unsigned roz= e-b;
+        for(unsigned i=0; i<roz; i++)
+				b[i]->praca();
 }
-
 
 int main()
 {
-	operacja o[] = {
-	operacja("w lewo", 12), operacja("obrot", 8),
-	operacja("w gore", 32), operacja("obrot", 10),
-	operacja("w prawo", 5), operacja("w dol", 25),
-	operacja("obrot", 32), operacja("w gore", 21),
-	operacja("obrot", 11), operacja("w prawo", 6)
-			};
-	robot* linia[] = {
-	new podajnik(0), new robot1R(1, o, o+3),
-	new podajnik(2), new robot2R(3, o+2, o+5, o+3, o+6),
-	new podajnik(4), new robot2R(5, o, o+4, o+2, o+6),
-	new podajnik(6), new robot1R(7, o+7, o+10), //nie wiem czy on sie tu pomylil czy specjalnie dojebal takie cos, ale o+10 to element za ostatnim, koniec tablicy.. wiec wyswietla jakies bzdury i trzeba zrobic obsluge tego wyzej..
-	new podajnik(8)
-	};
-	wykonaj(linia, linia+9);
-	for(unsigned i=0; i<9; i++)
-		delete linia[i];
+
+operacja o[] = {
+operacja("w lewo", 12), operacja("obrot", 8),
+operacja("w gore", 32), operacja("obrot", 10),
+operacja("w prawo", 5), operacja("w dol", 25),
+operacja("obrot", 32), operacja("w gore", 21),
+operacja("obrot", 11), operacja("w prawo", 6)
+};
+robot* linia[] = {
+new podajnik(0), new robot1R(1, o, o+3),
+new podajnik(2), new robot2R(3, o+2, o+5, o+3, o+6),
+new podajnik(4), new robot2R(5, o, o+4, o+2, o+6),
+new podajnik(6), new robot1R(7, o+7, o+10),
+new podajnik(8)
+};
+wykonaj(linia, linia+9);
+for(unsigned i=0; i<9; i++)
+        delete linia[i];
 }
