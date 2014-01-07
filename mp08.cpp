@@ -49,12 +49,13 @@ int main() {
 	pr3.pokaz();
 	pr3 = pr2;
 	pr3.pokaz();
-	osoba* w = &os;
-	w->pokaz();
-	w = &pr3;
-	w->pokaz();
+	osoba* w = &os; //tworzysz wskaznik na osobe i wrzucasz tam adres obiektu 'os'
+	w->pokaz(); //wywolujesz metode pokaz dla niego (czyli osoby) i pokazuje standardowo pola osoby
+	w = &pr3; //teraz wrzucasz pod niego adres obiektu pr3 (zauwaz, ze ten obiekt jest typu pracownik, a wskaznik stworzyles na osobe)
+	w->pokaz(); //wywulujesz metode pokaz() i co sie dzieje ? mimo, ze jest tam adres obiektu pracownik to ta metoda pokaze Ci tylko pola z osoby (bo wskaznik jest na klase osoba, wiec reszte obcina)
 	cout<<endl<<endl;
-	static_cast<pracownik*>(w)->pokaz();
+	static_cast<pracownik*>(w)->pokaz(); //i tutaj magia.. konwertujesz typ wskaznika (ktory byl na OSOBA*) na PRACOWNIK* i teraz jak wywolujesz te metode pokaz (tego samego obiektu)
+	// to wyswietli Ci wszystkie pola
 	
 	return 0;
 }
