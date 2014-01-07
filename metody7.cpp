@@ -36,6 +36,7 @@ class pracownik : public osoba
 	unsigned& placa(){return pl;}
 	const string& stanowisko() const {return stan;}
 	const unsigned& placa() const {return pl;}
+	pracownik(const pracownik& p): osoba(p.naz, p.wi), stan(p.stan), pl(p.pl) {}	//error_0 naprawiony, nieuki :-P
 };
 
 int main()
