@@ -32,10 +32,10 @@ class pracownik : public osoba{
 	const string& stanowisko() const {return stan;}
 	double& placa() {return plac;}
 	const double& placa() const {return plac;}
-/*	void pokaz() {
-		cout<<stan<<endl<<plac<<endl;
+	void pokaz() {	//sorrt, wczesniej zjebalem :-P
+		cout<<nazwisko<<endl<<lat<<endl<<stan<<endl<<plac<<endl;
 	}
-*/};
+};
 
 int main() {
 	osoba os("Dolas", 26);
