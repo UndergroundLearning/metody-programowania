@@ -10,7 +10,7 @@ template <class t1, class t2> class para
 	t1 elem1;
 	t2 elem2;
 	public:
-	para(): elem1(0), elem2(0){}
+	para(): elem1(0), elem2(0){} //z tym stringi moga miec problem, ale kto uzywa domyslnego przy parze.. :D
 	para(const t1& pierwszy, const t2& drugi): elem1(pierwszy), elem2(drugi){}
 	t1& elementPierwszy () {return elem1;}
 	t2& elementDrugi () {return elem2;}
