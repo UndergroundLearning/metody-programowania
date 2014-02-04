@@ -1,0 +1,57 @@
+#include <iostream>
+using namespace std;
+
+class osoba {
+	protected:
+	const string *imie;
+	const string nazwisko;
+	
+	public:
+	osoba(): imie(new string("brak")), nazwisko() {} 
+	osoba(const string& a, const string& b): imie(new string(a)), nazwisko(b) {}
+		
+	osoba(osoba& o): imie(new string (*o.imie)), nazwisko(o.nazwisko) {
+		imie=o.imie;
+	}
+	osoba& operator= (const osoba& os) {
+		if(this!=&os) {	
+			delete imie;
+			imie = new string(*os.imie);
+		}	
+		return *this;
+	}
+	~osoba() {delete imie; }
+};
+class student : public osoba {
+	const string kierunek;
+	const unsigned semestr;
+	public:
+	student(): osoba(), kierunek("brak"), semestr(0) {}
+	student(const string& a, const string& b, string& c, unsigned& d): osoba(a,b), kierunek(c), semestr(d) {}
+//	student(const osoba o): osoba(o) {}
+	
+};
+
+int main () {
+
+	osoba* tab[5];
+	//...
+	const osoba o1("Jan", "Kowalski");
+	const osoba o2("Ewa", "Nowak");
+	
+
+	tab[0] = new osoba ;
+	tab[1] = new student;
+	tab[2] = new osoba("Ala", "Kot");
+	tab[3] = new student(o1);
+//	tab[4] = new student(o2, "Informatyka", 3) ;
+/*	for(int i=0; i<5; i++)
+	try{
+		cout << *tab[i]<< endl;
+	}catch(const string & err){
+		cerr << err << endl;
+	}
+	cout << "********** 3 **********"<< endl;
+*/
+	return 0;
+}
